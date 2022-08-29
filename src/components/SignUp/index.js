@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { FirebaseContext } from "../Firebase";
 import * as ROUTES from "../../constants/routes";
@@ -9,7 +9,7 @@ function SignUpPage() {
         <>
             <h2>Sign Up</h2>
             <FirebaseContext.Consumer>
-            {firebase => <SignUpForm firebase={firebase}/>}
+                {firebase => <SignUpForm firebase={firebase}/>}
             </FirebaseContext.Consumer>
         </>
     );
@@ -25,6 +25,7 @@ const INITIAL_STATE = {
 
 function SignUpForm({ firebase }) {
     const [userdata, setUserdata] = useState(INITIAL_STATE);
+    const navigate = useNavigate();
 
     const isInvalid =
       userdata.passwordOne !== userdata.passwordTwo ||
@@ -38,9 +39,11 @@ function SignUpForm({ firebase }) {
         firebase.doCreateUserWithEmailAndPassword(email, passwordOne)
             .then(authUser => {
                 setUserdata({...INITIAL_STATE});
+                navigate(ROUTES.HOME);
             })
             .catch(error => {
                 setUserdata({ error });
+
             });
         
         event.preventDefault();
